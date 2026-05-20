@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operator Validation Framework</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; background: linear-gradient(90deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { color: #a0a0c0; font-size: 1.2em; margin-bottom: 40px; }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .card h2 { color: #00d4ff; margin-bottom: 15px; font-size: 1.3em; }
+        .card p { color: #c0c0d0; line-height: 1.7; }
+        .card code {
+            background: rgba(0,212,255,0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #00d4ff;
+        }
+        pre {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            border-left: 3px solid #7b2ff7;
+        }
+        pre code { background: none; padding: 0; color: #e0e0f0; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .badge-cuda { background: rgba(118, 214, 255, 0.2); color: #76d6ff; border: 1px solid rgba(118, 214, 255, 0.3); }
+        .badge-mlu { background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); }
+        .badge-triton { background: rgba(255, 136, 0, 0.2); color: #ff8800; border: 1px solid rgba(255, 136, 0, 0.3); }
+        .badges { margin-bottom: 20px; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .feature-item { background: rgba(123,47,247,0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(123,47,247,0.2); }
+        .feature-item strong { color: #7b2ff7; display: block; margin-bottom: 5px; }
+        .feature-item span { color: #a0a0c0; font-size: 0.9em; }
+        .footer { text-align: center; color: #606080; margin-top: 40px; font-size: 0.9em; }
+        .footer a { color: #7b2ff7; text-decoration: none; }
+        .quick-start { border-left: 3px solid #00d4ff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Operator Validation Framework</h1>
+        <p class="subtitle">多后端 AI 加速器算子验证框架</p>
+
+        <div class="badges">
+            <span class="badge badge-cuda">NVIDIA H100</span>
+            <span class="badge badge-mlu">寒武纪 MLU590</span>
+            <span class="badge badge-triton">FlagOS Triton</span>
+        </div>
+
+        <div class="card quick-start">
+            <h2>⚡ 快速开始</h2>
+            <pre><code># 安装
+pip install -e .
+
+# 运行验证
+python -m operator_validation.main --config configs/default.yaml
+
+# 指定算子和规模
+python -m operator_validation.main \
+    --operators matmul softmax sdpa \
+    --shapes small medium</code></pre>
+        </div>
+
+        <div class="card">
+            <h2>🎯 核心特性</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <strong>插件化后端</strong>
+                    <span>新增后端只需实现 BackendPlugin 接口</span>
+                </div>
+                <div class="feature-item">
+                    <strong>YAML 配置驱动</strong>
+                    <span>全部配置外部化，无需修改代码</span>
+                </div>
+                <div class="feature-item">
+                    <strong>ATen 算子映射</strong>
+                    <span>以 PyTorch ATen 接口为统一入口</span>
+                </div>
+                <div class="feature-item">
+                    <strong>精度 + 性能</strong>
+                    <span>MSE/相对误差/余弦相似度 + 延迟/吞吐</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📁 仓库结构</h2>
+            <pre><code>operator_validation/
+├── backend/           # 后端插件系统
+│   ├── base.py        # BackendPlugin 抽象基类
+│   ├── cuda_backend.py    # NVIDIA CUDA
+│   ├── mlu_backend.py     # 寒武纪 MLU
+│   └── triton_backend.py  # FlagOS Triton
+├── engine/            # 核心验证引擎
+│   ├── executor.py    # 算子执行器
+│   ├── validator.py   # 验证调度
+│   └── reporter.py    # 报告生成
+└── configs/           # YAML 配置文件</code></pre>
+        </div>
+
+        <div class="card">
+            <h2>🔌 新增后端示例</h2>
+            <pre><code>from operator_validation.backend import BackendPlugin, PluginRegistry
+
+class MyBackend(BackendPlugin):
+    name = "my_backend"
+    vendor = "my_vendor"
+    
+    def _init_device(self):
+        return torch.device("my_device:0")
+    
+    def exec_operator(self, aten_name, inputs, kwargs):
+        ...
+    
+    def synchronize(self):
+        ...
+
+PluginRegistry.register("my_backend", MyBackend)</code></pre>
+        </div>
+
+        <div class="footer">
+            <p>GitHub: <a href="https://github.com/Bonbon-Tang/operator-validation">Bonbon-Tang/operator-validation</a></p>
+        </div>
+    </div>
+</body>
+</html>
