@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "operator-validation"
+version = "0.1.0"
+description = "Multi-backend operator validation framework for AI accelerators"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "you@example.com"}
+]
+
+dependencies = [
+    "torch>=2.0.0",
+    "numpy>=1.24.0",
+    "pyyaml>=6.0",
+    "prettytable>=3.8.0",
+    "tqdm>=4.65.0",
+]
+
+[project.optional-dependencies]
+mlu = ["torch-mlu>=1.0.0"]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+operator-validate = "operator_validation.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "W", "I"]

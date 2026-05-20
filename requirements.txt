@@ -1,0 +1,12 @@
+torch>=2.0.0
+numpy>=1.24.0
+pyyaml>=6.0
+prettytable>=3.8.0
+tqdm>=4.65.0
+
+# 寒武纪 MLU 支持（可选）
+# torch-mlu>=1.0.0
+
+# 开发依赖
+pytest>=7.4.0
+pytest-cov>=4.1.0

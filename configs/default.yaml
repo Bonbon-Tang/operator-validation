@@ -1,0 +1,83 @@
+# 默认配置：H100 vs MLU590
+backends:
+  h100:
+    enabled: true
+    device: cuda:0
+    dtype: float32
+    vendor: nvidia
+    priority: 0
+
+  mlu590:
+    enabled: true
+    device: mlu:0
+    dtype: float32
+    vendor: cambricon
+    priority: 1
+
+operators:
+  - name: matmul
+    aten_alias: matmul
+    shapes:
+      small:  [[2, 128, 256]]
+      medium: [[2, 512, 1024], [2, 1024, 512]]
+      large:  [[4, 1024, 2048]]
+
+  - name: linear
+    aten_alias: linear
+    shapes:
+      small:  [[64, 256]]
+      medium: [[128, 768]]
+      large:  [[512, 2048]]
+
+  - name: conv2d
+    aten_alias: conv2d
+    shapes:
+      small:  [[1, 32, 56, 56]]
+      medium: [[4, 64, 112, 112]]
+      large:  [[8, 128, 224, 224]]
+
+  - name: layer_norm
+    aten_alias: layer_norm
+    shapes:
+      small:  [[2, 128, 256]]
+      medium: [[2, 512, 768]]
+      large:  [[4, 1024, 2048]]
+
+  - name: relu
+    aten_alias: relu
+    shapes:
+      small:  [[64, 128]]
+      medium: [[256, 512]]
+      large:  [[1024, 2048]]
+
+  - name: gelu
+    aten_alias: gelu
+    shapes:
+      small:  [[64, 128]]
+      medium: [[256, 512]]
+      large:  [[1024, 2048]]
+
+  - name: softmax
+    aten_alias: softmax
+    shapes:
+      small:  [[2, 256, 256]]
+      medium: [[2, 512, 512]]
+      large:  [[4, 1024, 1024]]
+
+  - name: sdpa
+    aten_alias: sdpa
+    shapes:
+      small:  [[2, 4, 256, 64]]
+      medium: [[2, 8, 512, 64]]
+      large:  [[4, 16, 1024, 64]]
+
+validation:
+  rtol: 1e-3
+  atol: 1e-4
+  cosine_threshold: 0.9999
+  warmup_iter: 20
+  bench_iter: 100
+
+output:
+  report_path: ./validation_report.json
+  log_level: INFO
